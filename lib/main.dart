@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:tflite/tflite.dart';
 void main(){
   runApp(MaterialApp(
+
     debugShowCheckedModeBanner: false,
     theme: ThemeData.dark(),
     home: HomePage(),
@@ -22,8 +23,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
 
   bool _isLoading;
-  File _image;
+  XFile _image;
   List _output;
+
 
   @override
   void initState() {
@@ -54,7 +56,8 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            _image==null?Container():Image.file(_image),
+
+            _image==null?Container():Image.file(File(_image.path)),
             SizedBox(height: 16,),
             _output == null? Text(""):Text("${_output[0]["label"]}")
           ],
@@ -69,7 +72,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   chooseImage() async{
-    var image= await ImagePicker.pickImage(source: ImageSource.gallery);
+    final ImagePicker _picker = ImagePicker();
+    // Pick an image
+    final XFile image = await _picker.pickImage(source: ImageSource.gallery);
     if(image ==null) return null;
     setState(() {
       _isLoading=true;
@@ -78,7 +83,7 @@ class _HomePageState extends State<HomePage> {
     runModelOnImage(image);
   }
 
-  runModelOnImage(File image) async{
+  runModelOnImage(XFile image) async{
     var output= await Tflite.runModelOnImage(path: image.path,
     numResults: 2,
     imageMean: 127.5,
